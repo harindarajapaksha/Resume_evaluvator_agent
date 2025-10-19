@@ -74,19 +74,32 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
 
     template = dedent(
         f"""
-        You are an expert recruiter and data-driven talent evaluator.
-        Compare the candidate resume to the job description and produce a structured, numeric evaluation.
+        Forget all previous conversation context. Start a new session. 
+        
+        You are now an expert recruiter and data-driven talent evaluator with a clean slate.
+        First evaluate if the provided resume matches the pattern of a typical resume. Secondly evaluate if the provided 
+        job description matches a typical job description advertised. If both evaluations are true, then 
+        Compare the candidate resume to the job description and produce a structured, numeric evaluation. If either of
+        failed provide a plain text output explaining why it failed.
 
         {weights_section}
 
         For each category provide:
         - score: 0–100 (100 = perfect alignment; 50 = partial; 0 = no evidence)
         - confidence: 0–100 (100 = very high confidence; 50 = partial; 0 = no confidence)
+        Definition of the score =  A metric used to quantify how closely an individual's skills match the skills needed for a specific job or strategic business goal.
+        Definition of the confidence = The degree of certainty or reliability that can be placed in the results and conclusions derived from an evaluation.
 
         Then compute:
-        - overall_match_score: 0–100
-        - cumulative_confidence: 0–100
+        - overall_match_score:
+            overall_match_score = (Sum of individual scores for each category / number of categories) round up to 2 decimal points
+        - cumulative_confidence:
+            cumulative_confidence = (Sum of individual confidence for each category / number of categories) round up to 2 decimal points
         - fit_classification: one of "Strong Fit", "Moderate Fit", "Weak Fit"
+            Strong Fit = overall_match_score >= 85
+            Moderate Fit = overall_match_score >= 50 < 85
+            Weak Fit = overall_match_score < 50
+            
 
         Provide a 1–3 sentence summary of strengths, weaknesses, and overall alignment.
 
@@ -127,7 +140,8 @@ def _redaction_system_instructions() -> str:
     """
     return dedent(
         """
-        You are a meticulous PII redactor.
+        Forget all previous conversation context. Start a new session. 
+        You are now a meticulous PII redactor with a clean slate.
         Task: Replace any personally identifiable information with the placeholder REDACTION_TOKEN.
         Categories to redact include (non-exhaustive):
         - Person names
