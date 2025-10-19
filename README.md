@@ -8,13 +8,13 @@
 * Resume file format must be in file_name.txt format
 * Position description must be in file_name.txt format
 
-#### .env file
+#### OPENAI API key
 
-This file is not included in the repo. Need to create this file and include the following line with the API keay. 
+Export the API key before running this. 
 
 Example:
 ```{bash}
-OPENAI_API_KEY="API-KEY"
+export OPENAI_API_KEY="Your OpenAI API key"
 ```
 
 #### Commandline usage
