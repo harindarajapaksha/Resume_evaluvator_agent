@@ -76,11 +76,13 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
         f"""
         Forget all previous conversation context. Start a new session. 
         
+        set the variable incorrect_input = False
+        
         You are now an expert recruiter and data-driven talent evaluator with a clean slate.
         First evaluate if the provided resume matches the pattern of a typical resume. Secondly evaluate if the provided 
         job description matches a typical job description advertised. If both evaluations are true, then 
         Compare the candidate resume to the job description and produce a structured, numeric evaluation. If either of
-        failed provide a plain text output explaining why it failed.
+        failed provide a plain text output explaining why it failed and set the variable incorrect_input = TRUE. 
 
         {weights_section}
 
@@ -95,6 +97,7 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
             overall_match_score = (Sum of individual scores for each category / number of categories) round up to 2 decimal points
         - cumulative_confidence:
             cumulative_confidence = (Sum of individual confidence for each category / number of categories) round up to 2 decimal points
+            if set the variable incorrect_input = TRUE Then set the cumulative_confidence = 100
         - fit_classification: one of "Strong Fit", "Moderate Fit", "Weak Fit"
             Strong Fit = overall_match_score >= 85
             Moderate Fit = overall_match_score >= 50 < 85
