@@ -44,7 +44,7 @@ def _setup_logger() -> logging.Logger:
     console_handler.setLevel(log_level)
     logger.addHandler(console_handler)
 
-    log_file = os.getenv("LOG_FILE", "logs/redactor.log")
+    log_file = os.getenv("LOG_FILE", "../logs/redactor.log")
     try:
         log_path = Path(log_file)
         log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -116,7 +116,7 @@ def invoke_llm_with_retry(llm: ChatOpenAI, msg: Any) -> str:
 
 def redaction_run(resume_path: str) -> str:
     """Run redaction for the given resume file path and return redacted content."""
-    from prompts import redaction_prompt
+    from modules.prompts import redaction_prompt
 
     prompt = redaction_prompt()
     llm = load_llm()

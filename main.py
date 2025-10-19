@@ -5,8 +5,8 @@ import argparse
 from pathlib import Path
 from typing import Optional
 
-from prompts import EvaluationOutput, resume_eveluator_prompt
-from redactor import redaction_run
+from modules.prompts import EvaluationOutput, resume_eveluator_prompt
+from modules.redactor import redaction_run
 from langchain_openai import ChatOpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
