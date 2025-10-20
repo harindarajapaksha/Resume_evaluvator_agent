@@ -15,13 +15,6 @@ except Exception:
         pass
 
 
-# Load environment variables
-dotenv_path = os.getenv("DOTENV_PATH")
-if dotenv_path:
-    load_dotenv(dotenv_path)
-# load_dotenv(os.getenv("DOTENV_PATH", ".env"))
-
-
 def _setup_logger() -> logging.Logger:
     """Configure and return module logger with console and rotating file handlers."""
     valid_levels = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
