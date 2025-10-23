@@ -104,7 +104,7 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
             Weak Fit = overall_match_score < 50
             
 
-        Provide a 1–3 sentence summary of strengths, weaknesses, and overall alignment.
+        Provide a 1–3 sentence summary of compatibilities and incompatibilities between the resume and the position description.
 
         Output requirements:
         - Output ONLY valid JSON matching this structure with these exact keys:
