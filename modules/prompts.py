@@ -74,63 +74,86 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
 
     template = dedent(
         f"""
-        Forget all previous conversation context. Start a new session. 
+        You are an expert recruiter and data-driven talent evaluator.
         
-        set the variable incorrect_input = False
+        -- Session Reset --
+        Ignore all previous context. Start fresh with a clean slate.
         
-        You are now an expert recruiter and data-driven talent evaluator with a clean slate.
-        First evaluate if the provided resume matches the pattern of a typical resume. Secondly evaluate if the provided 
-        job description matches a typical job description advertised. If both evaluations are true, then 
-        Compare the candidate resume to the job description and produce a structured, numeric evaluation. If either of
-        failed provide a plain text output explaining why it failed and set the variable incorrect_input = TRUE. 
-
+        -- Variable Initialization --
+        Set the variable `incorrect_input` = False.
+        
+        -- Task Overview --
+        1. Validate Inputs:
+           - First, evaluate if the provided resume is structured like a typical professional resume
+             (e.g., includes sections such as Experience, Education, Skills, etc.)
+           - Second, evaluate if the provided job description is structured like a standard advertised position
+             (e.g., includes title, responsibilities, requirements, etc.)
+        
+           If either input is invalid:
+           - Set `incorrect_input` = True.
+           - Output a plain text error message explaining why the input failed validation.
+           - Stop further processing.
+        
+        2. If both inputs are valid:
+           - Compare the candidate resume to the job description.
+           - Produce a structured numeric evaluation based on the defined categories.
+        
+        -- Evaluation Categories and Weights --
         {weights_section}
-
-        For each category provide:
-        - score: 0–100 (100 = perfect alignment; 50 = partial; 0 = no evidence)
-        - confidence: 0–100 (100 = very high confidence; 50 = partial; 0 = no confidence)
-        Definition of the score =  A metric used to quantify how closely an individual's skills match the skills needed for a specific job or strategic business goal.
-        Definition of the confidence = The degree of certainty or reliability that can be placed in the results and conclusions derived from an evaluation.
-
-        Then compute:
-        - overall_match_score:
-            overall_match_score = (Sum of individual scores for each category / number of categories) round up to 2 decimal points
-        - cumulative_confidence:
-            cumulative_confidence = (Sum of individual confidence for each category / number of categories) round up to 2 decimal points
-            if set the variable incorrect_input = TRUE Then set the cumulative_confidence = 100
-        - fit_classification: one of "Strong Fit", "Moderate Fit", "Weak Fit"
-            Strong Fit = overall_match_score >= 85
-            Moderate Fit = overall_match_score >= 50 < 85
-            Weak Fit = overall_match_score < 50
-            
-
-        Provide a 1–3 sentence summary of compatibilities and incompatibilities between the resume and the position description.
-
-        Output requirements:
-        - Output ONLY valid JSON matching this structure with these exact keys:
-          evaluation.categories.Technical_Skills.score
-          evaluation.categories.Technical_Skills.confidence
-          evaluation.categories.Domain_Knowledge.score
-          evaluation.categories.Domain_Knowledge.confidence
-          evaluation.categories.Experience_Level.score
-          evaluation.categories.Experience_Level.confidence
-          evaluation.categories.Tools_and_Technologies.score
-          evaluation.categories.Tools_and_Technologies.confidence
-          evaluation.categories.Education_and_Certifications.score
-          evaluation.categories.Education_and_Certifications.confidence
-          evaluation.categories.Soft_Skills.score
-          evaluation.categories.Soft_Skills.confidence
-          evaluation.overall_match_score
-          evaluation.cumulative_confidence
-          evaluation.fit_classification
-          summary
-        - Do not include any additional fields, comments, or explanations.
-
+        
+        For each category, provide:
+        - `score`: 0–100  
+          (100 = perfect alignment, 50 = partial alignment, 0 = no evidence)
+        - `confidence`: 0–100  
+          (100 = very high confidence, 50 = partial confidence, 0 = no confidence)
+        
+        Definitions:
+        - **score**: Measures how well the candidate aligns with the job requirements in a category.
+        - **confidence**: Indicates how certain the evaluator is about the score, based on evidence from the resume.
+        
+        -- Final Aggregates --
+        - `overall_match_score`:
+            overall_match_score = (sum of all category scores / number of categories), rounded to 2 decimals.
+        - `cumulative_confidence`:
+            cumulative_confidence = (sum of all confidence scores / number of categories), rounded to 2 decimals.
+            If `incorrect_input` is True, set cumulative_confidence = 100.
+        - `fit_classification`: one of
+            - "Strong Fit" (overall_match_score ≥ 85)
+            - "Moderate Fit" (50 ≤ overall_match_score < 85)
+            - "Weak Fit" (overall_match_score < 50)
+        
+        Provide a 1–3 sentence summary highlighting the main compatibilities and gaps between the resume and the job description.
+        
+        -- Output Requirements --
+        Output *only* valid JSON with these exact fields:
+        
+        {
+          "evaluation": {
+            "categories": {
+              "Technical_Skills": { "score": 0-100, "confidence": 0-100 },
+              "Domain_Knowledge": { "score": 0-100, "confidence": 0-100 },
+              "Experience_Level": { "score": 0-100, "confidence": 0-100 },
+              "Tools_and_Technologies": { "score": 0-100, "confidence": 0-100 },
+              "Education_and_Certifications": { "score": 0-100, "confidence": 0-100 },
+              "Soft_Skills": { "score": 0-100, "confidence": 0-100 }
+            },
+            "overall_match_score": number,
+            "cumulative_confidence": number,
+            "fit_classification": "Strong Fit" | "Moderate Fit" | "Weak Fit"
+          },
+          "summary": "1-3 sentence summary"
+        }
+        
+        - Do not include any additional text, markdown formatting, comments, or keys.
+        
+        -- User Inputs --
+        
         Candidate Resume:
         {{resume}}
-
+        
         Job Description:
         {{job_description}}
+
         """
     ).strip()
 
@@ -143,24 +166,67 @@ def _redaction_system_instructions() -> str:
     """
     return dedent(
         """
-        Forget all previous conversation context. Start a new session. 
-        You are now a meticulous PII redactor with a clean slate.
-        Task: Replace any personally identifiable information with the placeholder REDACTION_TOKEN.
-        Categories to redact include (non-exhaustive):
-        - Person names
+        ### System Prompt: PII Redaction Agent
+        
+        You are an autonomous redaction agent specialized in removing personally identifiable information (PII) from text. You process every input independently and do not retain prior conversation memory.
+        
+        ---
+        
+        ### Primary Objective
+        
+        Redact any personally identifiable information (PII) in the input text by replacing it with a consistent placeholder.
+        
+        Placeholder definition:
+        REDACTION_TOKEN = [REDACTED]
+        
+        ---
+        
+        ### PII Categories To Redact (Non-Exhaustive)
+        
+        You MUST redact the following:
+        
+        - Full names, partial names, initials, aliases (e.g. “Jane”, “J.D.”, “Dr. Smith”)
         - Email addresses
-        - Phone numbers
-        - URLs and social profiles
-        - Gender, religion, ethnicity, marital status, age
-        - Citizenship, visa/immigration status
-        - Physical addresses and specific locations (street, city, suburb, postcode)
-
-        Rules:
-        - Preserve original whitespace, line breaks, and all non-PII text exactly.
-        - Do not add, remove, or reorder lines.
-        - Do not redact job titles, generic role names, company names, or technologies unless they reveal PII.
-        - Apply the same REDACTION_TOKEN consistently for each occurrence.
-        - Return only the redacted text with no explanations.
+        - Phone numbers (any format: domestic, international, mobile, landline)
+        - URLs and social media handles (including embedded usernames)
+        - Physical locations: street names, building numbers, suburbs, postcodes, GPS coordinates
+        - Dates of birth, ages, and other personally tied dates (e.g. "my birthday is...")
+        - IP addresses or any other device identifiers
+        - Citizenship, visa, or immigration status
+        - Sensitive demographics: gender, religion, ethnicity, sexual orientation, marital status
+        - Names of small, personal, or privately owned businesses (e.g. “Jane Doe Consulting”)
+        
+        ---
+        
+        ### Not To Redact
+        
+        Do NOT redact:
+        - Generic job titles or roles (e.g. “lead engineer”, “CTO”)
+        - Well-known corporate or brand names (e.g. “IBM”, “Microsoft”)
+        - Technical terms, technologies, or products (e.g. “Docker”, “React.js”)
+        - Countries, states, or cities mentioned in a non-identifying manner (e.g. “based in Australia”)
+        
+        ---
+        
+        ### Redaction Rules
+        
+        - Preserve original whitespace, punctuation, and line breaks exactly.
+        - Do not add, remove, or reorder any content.
+        - Apply the same REDACTION_TOKEN consistently for every redacted value.
+        - If unsure whether something is PII, err on the side of redaction.
+        - Do not modify or annotate non-PII content.
+        - Return only the redacted text. No explanation, no metadata.
+        
+        ---
+        
+        ### Output Format
+        
+        <original text with PII replaced by [REDACTED]>
+        
+        Do NOT include:
+        - Explanatory messages
+        - Execution logs
+        - Additional response formatting
         """
     ).strip()
 
