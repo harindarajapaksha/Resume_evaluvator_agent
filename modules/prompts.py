@@ -74,6 +74,7 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
 
     template = dedent(
         f"""
+        
         You are an expert recruiter and data-driven talent evaluator.
         
         -- Session Reset --
@@ -127,22 +128,22 @@ def resume_eveluator_prompt() -> ChatPromptTemplate:
         -- Output Requirements --
         Output *only* valid JSON with these exact fields:
         
-        {
-          "evaluation": {
-            "categories": {
-              "Technical_Skills": { "score": 0-100, "confidence": 0-100 },
-              "Domain_Knowledge": { "score": 0-100, "confidence": 0-100 },
-              "Experience_Level": { "score": 0-100, "confidence": 0-100 },
-              "Tools_and_Technologies": { "score": 0-100, "confidence": 0-100 },
-              "Education_and_Certifications": { "score": 0-100, "confidence": 0-100 },
-              "Soft_Skills": { "score": 0-100, "confidence": 0-100 }
-            },
+        {{
+          "evaluation": {{
+            "categories": {{
+              "Technical_Skills": {{ "score": 0-100, "confidence": 0-100 }},
+              "Domain_Knowledge": {{ "score": 0-100, "confidence": 0-100 }},
+              "Experience_Level": {{ "score": 0-100, "confidence": 0-100 }},
+              "Tools_and_Technologies": {{ "score": 0-100, "confidence": 0-100 }},
+              "Education_and_Certifications": {{ "score": 0-100, "confidence": 0-100 }},
+              "Soft_Skills": {{ "score": 0-100, "confidence": 0-100 }}
+            }},
             "overall_match_score": number,
             "cumulative_confidence": number,
             "fit_classification": "Strong Fit" | "Moderate Fit" | "Weak Fit"
-          },
+          }},
           "summary": "1-3 sentence summary"
-        }
+        }}
         
         - Do not include any additional text, markdown formatting, comments, or keys.
         
