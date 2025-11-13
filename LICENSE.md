@@ -12,7 +12,7 @@
 (e) **"Work"** means the work of authorship, whether in source or object form, made available under this License, including any associated documentation, ideas, structures, prompts, methods, or design patterns contained within it.  
 (f) **"Derivative Works"** shall mean any work based on the Work that modifies, adapts, transforms, or extends the Work.  
 (g) **"AI Systems"** means any machine learning, deep learning, statistical modeling, or artificial intelligence system, including but not limited to large language models (LLMs), generative models, or training datasets used to build or evaluate such systems.  
-(h) **"AI Development Activity"** means training, fine-tuning, evaluating, distilling, prompting, augmenting, or otherwise using the Work—directly or indirectly—in connection with the creation, improvement, or operation of any AI Systems.
+(h) **"AI Development Activity"** means training, fine-tuning, evaluating, distilling, prompting, augmenting, or otherwise using the Work directly or indirectly in connection with the creation, improvement, or operation of any AI Systems.
 
 ---
 
