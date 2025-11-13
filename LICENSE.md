@@ -50,7 +50,6 @@ For Commercial Use of this Work or Derivative Works, You must obtain a separate 
 Unless required by applicable law or agreed to in writing, the Copyright Holder provides the Work on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 ---
-[LICENSE.md](LICENSE.md)
 ### 7. Limitation of Liability.
 
 In no event and under no legal theory shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages, arising out of the use or inability to use the Work.
